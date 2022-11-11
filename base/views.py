@@ -4,6 +4,7 @@ from rest_framework.decorators import action
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
+from rest_framework.throttling import ScopedRateThrottle
 from django.contrib.postgres.search import TrigramSimilarity
 from .serializers import *
 
@@ -11,6 +12,9 @@ from .serializers import *
 class AuthorViewSet(ModelViewSet):
     queryset = Author.objects.all()
     serializer_class = AuthorSerializer
+
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = 'base'
 
     @action(detail=True, methods=["GET"])
     def albums(self, request, pk, *args, **kwargs):
@@ -36,6 +40,9 @@ class AlbumViewSet(ModelViewSet):
     queryset = Album.objects.all()
     serializer_class = AlbumSerializer
 
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = 'base'
+
     @action(detail=True, methods=["GET","POST"])
     def author(self, request, pk):
         album = Album.objects.get(id=pk)
@@ -53,6 +60,9 @@ class AlbumViewSet(ModelViewSet):
 class MusicViewSet(ModelViewSet):
     queryset = Music.objects.all()
     serializer_class = MusicSerializer
+
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = 'base'
 
     def retrieve(self, request,pk=None, *args, **kwargs):
         queryset = Music.objects.all()
